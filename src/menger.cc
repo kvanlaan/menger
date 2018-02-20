@@ -38,5 +38,13 @@ void
 Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
                           std::vector<glm::uvec3>& obj_faces) const
 {
+    /*Start with a single cube
+    for i = 0 to L do
+        for each cube do
+            Subdivide cube into 27 subcubes of one third the side length
+            Delete the 7 inner subcubes
+        end for
+     end for*/
+
 }
 

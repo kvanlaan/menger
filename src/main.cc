@@ -212,8 +212,8 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> obj_vertices;
 	std::vector<glm::uvec3> obj_faces;
 
-        //FIXME: Create the geometry from a Menger object.
-        CreateTriangle(obj_vertices, obj_faces);
+    //FIXME: Create the geometry from a Menger object.
+    CreateTriangle(obj_vertices, obj_faces);
 
 	g_menger->set_nesting_level(1);
 
@@ -337,7 +337,8 @@ int main(int argc, char* argv[])
 		// Switch to the Geometry VAO.
 		CHECK_GL_ERROR(glBindVertexArray(g_array_objects[kGeometryVao]));
 
-		if (g_menger && g_menger->is_dirty()) {
+        if (g_menger && g_menger->is_dirty())
+        {
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
 
