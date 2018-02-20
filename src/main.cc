@@ -341,7 +341,7 @@ int main(int argc, char* argv[])
         {
 			g_menger->generate_geometry(obj_vertices, obj_faces);
 			g_menger->set_clean();
-
+            CreateTriangle(obj_vertices, obj_faces);
 			// FIXME: Upload your vertex data here.
 		}
 

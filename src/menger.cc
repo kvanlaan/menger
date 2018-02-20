@@ -34,6 +34,14 @@ Menger::set_clean()
 }
 
 // FIXME generate Menger sponge geometry
+/**
+You will want to write a function which, given a list of existing vertices
+(in homogeneous coordinates) and triangle indices, appends the vertices and
+triangles necessary to draw a cube with diametrically-opposite corners at
+arbitrary locations (minx, miny, minz) and (maxx, maxy, maxz). This will entail
+appending the eight cube vertices, and enough triangles to draw all six faces
+of the cube.
+ */
 void
 Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
                           std::vector<glm::uvec3>& obj_faces) const
@@ -45,6 +53,16 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
             Delete the 7 inner subcubes
         end for
      end for*/
+//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 0.0, 0.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 0.0, 1.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 1.0, 1.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 1.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 0.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 0.0, 0.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 0.0, 0));
+//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 0.0, 0.0, 0));
+//    obj_faces.push_back();
+
 
 }
 
