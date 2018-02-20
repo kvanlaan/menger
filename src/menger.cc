@@ -53,16 +53,16 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
             Delete the 7 inner subcubes
         end for
      end for*/
-//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 0.0, 0.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 0.0, 1.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(0.0, 1.0, 1.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 1.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 0.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 0.0, 0.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 1.0, 0.0, 0));
-//    obj_vertices.push_back(std::vector<glm::vec4>(1.0, 0.0, 0.0, 0));
+//    obj_vertices.clear();
+//    obj_faces.clear();
+//    obj_vertices.push_back(glm::vec4(0.0, 0.0, 0.0, 0));
+//    obj_vertices.push_back(glm::vec4(0.0, 0.0, 1.0, 0));
+//    obj_vertices.push_back(glm::vec4(0.0, 1.0, 1.0, 0));
+//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 1.0, 0));
+//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 0.0, 0));
+//    obj_vertices.push_back(glm::vec4(1.0, 0.0, 0.0, 0));
+//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 0.0, 0));
+//    obj_vertices.push_back(glm::vec4(1.0, 0.0, 0.0, 0));
 //    obj_faces.push_back();
-
-
 }
 
