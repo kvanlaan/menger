@@ -214,6 +214,7 @@ int main(int argc, char* argv[])
 
     //FIXME: Create the geometry from a Menger object.
     CreateTriangle(obj_vertices, obj_faces);
+    g_menger->generate_geometry(obj_vertices, obj_faces);
 
 	g_menger->set_nesting_level(1);
 
@@ -339,10 +340,11 @@ int main(int argc, char* argv[])
 
         if (g_menger && g_menger->is_dirty())
         {
-			g_menger->generate_geometry(obj_vertices, obj_faces);
+            g_menger->generate_geometry(obj_vertices, obj_faces);
             g_menger->set_clean();
 
-			// FIXME: Upload your vertex data here.
+            // FIXME: Upload your vertex data here.
+
 		}
 
 		// Compute the projection matrix.

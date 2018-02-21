@@ -1,4 +1,5 @@
 #include "menger.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace {
 	const int kMinLevel = 0;
@@ -53,16 +54,24 @@ Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
             Delete the 7 inner subcubes
         end for
      end for*/
-//    obj_vertices.clear();
-//    obj_faces.clear();
-//    obj_vertices.push_back(glm::vec4(0.0, 0.0, 0.0, 0));
-//    obj_vertices.push_back(glm::vec4(0.0, 0.0, 1.0, 0));
-//    obj_vertices.push_back(glm::vec4(0.0, 1.0, 1.0, 0));
-//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 1.0, 0));
-//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 0.0, 0));
-//    obj_vertices.push_back(glm::vec4(1.0, 0.0, 0.0, 0));
-//    obj_vertices.push_back(glm::vec4(1.0, 1.0, 0.0, 0));
-//    obj_vertices.push_back(glm::vec4(1.0, 0.0, 0.0, 0));
-//    obj_faces.push_back();
+    /*
+     * Need to add 5 sides, or 11 more triangles (we're missing one on this side)
+     * -one side is rotated 90 deg on the x axis, then translated left
+     * -one side is rotated 90 deg on the x axis, then translated right
+     * -one side is rotated 90 deg on the y axis, then translated up
+     * -one side is rotated 90 deg on the y axis, then translated down
+     * -one side is translated on the z axis by the height of the triangle
+     * trangles can share vertices, which is what the obj_faces/indices means
+     * i'm tired
+     * */
+//    glm::mat4 mat = glm::translate(glm::mat4(), glm::vec3(10.0f, 10.0f, 10.0f));
+//    auto mat = glm::rotate(glm::mat4(), 90.f,  glm::vec3(1.0f, 0.0f, 0.0f));
+//    obj_vertices[0] = mat * obj_vertices[0];
+//    obj_vertices[1] = mat * obj_vertices[1];
+//    obj_vertices[2] = mat * obj_vertices[2];
+//    obj_faces[0] = mat*obj_faces[0];
+    obj_vertices.push_back(glm::vec4(5.0f, 0.5f, -0.5f, 1.0f));
+    obj_faces.push_back(glm::uvec3(1, 3, 2));
+
 }
 
