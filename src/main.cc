@@ -105,6 +105,22 @@ SaveObj(const std::string& file,
         const std::vector<glm::vec4>& vertices,
         const std::vector<glm::uvec3>& indices)
 {
+    std::ofstream geo_file;
+    geo_file.open (file);
+    for(const auto& vertex : vertices)
+    {
+        geo_file << "v " + std::to_string(vertex[0])
+                + " " + std::to_string(vertex[1])
+                + " " + std::to_string(vertex[2]) << "\n";
+    }
+    for(const auto& index : indices)
+    {
+        auto ind = index + glm::uvec3(1.f,1.f,1.f);
+        geo_file << "f " + std::to_string(ind[0])
+                + " " + std::to_string(ind[1])
+                + " " + std::to_string(ind[2]) << "\n";
+    }
+    geo_file.close();
 }
 
 void
@@ -408,5 +424,6 @@ int main(int argc, char* argv[])
     }
     glfwDestroyWindow(window);
     glfwTerminate();
+    SaveObj("geometry.obj", obj_vertices, obj_faces);
     exit(EXIT_SUCCESS);
 }
