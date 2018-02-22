@@ -1,6 +1,8 @@
 #include "menger.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <iostream>
+
 namespace {
 	const int kMinLevel = 0;
 	const int kMaxLevel = 4;
@@ -34,44 +36,114 @@ Menger::set_clean()
 	dirty_ = false;
 }
 
-// FIXME generate Menger sponge geometry
-/**
-You will want to write a function which, given a list of existing vertices
-(in homogeneous coordinates) and triangle indices, appends the vertices and
-triangles necessary to draw a cube with diametrically-opposite corners at
-arbitrary locations (minx, miny, minz) and (maxx, maxy, maxz). This will entail
-appending the eight cube vertices, and enough triangles to draw all six faces
-of the cube.
- */
+void Menger::draw_cube(std::vector<glm::vec4>& obj_vertices,
+                  std::vector<glm::uvec3>& obj_faces,
+                  glm::vec3 min_vals,
+                  glm::vec3 max_vals)
+{
+    const auto x_min = min_vals[0];
+    const auto x_max = max_vals[0];
+    const auto y_min = min_vals[1];
+    const auto y_max = max_vals[1];
+    const auto z_min = min_vals[2];
+    const auto z_max = max_vals[2];
+
+    //skip all previous vertices
+    const auto num_vertices = glm::uvec3(obj_faces.size(),
+                                   obj_faces.size(),
+                                   obj_faces.size());
+
+    obj_vertices.push_back(glm::vec4(x_min, y_min, z_min, 1.0f)); //0
+    obj_vertices.push_back(glm::vec4(x_min, y_min, z_max, 1.0f)); //1
+    obj_vertices.push_back(glm::vec4(x_min, y_max, z_max, 1.0f)); //2
+    obj_vertices.push_back(glm::vec4(x_min, y_max, z_min, 1.0f)); //3
+    obj_vertices.push_back(glm::vec4(x_max, y_max, z_max, 1.0f)); //4
+    obj_vertices.push_back(glm::vec4(x_max, y_max, z_min, 1.0f)); //5
+    obj_vertices.push_back(glm::vec4(x_max, y_min, z_min, 1.0f)); //6
+    obj_vertices.push_back(glm::vec4(x_max, y_min, z_max, 1.0f)); //7
+
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 3));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 5, 0));
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 1, 3));
+    obj_faces.push_back(num_vertices + glm::uvec3(1, 2, 3));
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 1));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 0));
+
+    obj_faces.push_back(num_vertices + glm::uvec3(1, 7, 2));
+    obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 2));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 5));
+    obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 5));
+    obj_faces.push_back(num_vertices + glm::uvec3(3, 5, 2));
+    obj_faces.push_back(num_vertices + glm::uvec3(5, 4, 2));
+}
+
+void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
+                       std::vector<glm::uvec3>& obj_faces,
+                       const int depth,
+                       glm::vec3 minvals,
+                       glm::vec3 maxvals)
+{
+    if(depth >= nesting_level_)
+    {
+        draw_cube(obj_vertices, obj_faces,
+                  minvals, maxvals);
+    }
+    else
+    {
+        const auto x_min = minvals[0];
+        const auto x_max = maxvals[0];
+        const auto y_min = minvals[1];
+        const auto y_max = maxvals[1];
+        const auto z_min = minvals[2];
+        const auto z_max = maxvals[2];
+
+        //it's a cube, so these diffs should all
+        //be the same lol
+        auto third = (x_max - x_min)/3;
+        auto x = x_min;
+
+        while(x < x_max)
+        {
+            auto y = y_min;
+            while(y < y_max)
+            {
+                auto z = z_min;
+                while(z < z_max)
+                {
+                    if(!(x == x_min + third &&
+                         y == y_min + third &&
+                         (z == z_min || z_max)) &&
+                            !((x == x_min + third) &&
+                              (z == z_min + third) &&
+                              (y == y_min || y == y_max)) &&
+                            !((y == y_min + third) &&
+                              (z == z_min + third) &&
+                              (x == x_min || x == x_max)) &&
+                            !((x == x + third) && (y == y + third)
+                              && (z == z + third)))
+                    {
+                        gen_geo_recursive(obj_vertices, obj_faces,
+                                          depth + 1,
+                                          glm::vec3(x, y, z),
+                                          glm::vec3(x+third,
+                                                    y+third,
+                                                    z+third));
+                    }
+                    z += third;
+                }
+                y += third;
+            }
+            x += third;
+        }
+    }
+}
+
 void
 Menger::generate_geometry(std::vector<glm::vec4>& obj_vertices,
-                          std::vector<glm::uvec3>& obj_faces) const
+                          std::vector<glm::uvec3>& obj_faces)
 {
-    /*Start with a single cube
-    for i = 0 to L do
-        for each cube do
-            Subdivide cube into 27 subcubes of one third the side length
-            Delete the 7 inner subcubes
-        end for
-     end for*/
-    /*
-     * Need to add 5 sides, or 11 more triangles (we're missing one on this side)
-     * -one side is rotated 90 deg on the x axis, then translated left
-     * -one side is rotated 90 deg on the x axis, then translated right
-     * -one side is rotated 90 deg on the y axis, then translated up
-     * -one side is rotated 90 deg on the y axis, then translated down
-     * -one side is translated on the z axis by the height of the triangle
-     * trangles can share vertices, which is what the obj_faces/indices means
-     * i'm tired
-     * */
-//    glm::mat4 mat = glm::translate(glm::mat4(), glm::vec3(10.0f, 10.0f, 10.0f));
-//    auto mat = glm::rotate(glm::mat4(), 90.f,  glm::vec3(1.0f, 0.0f, 0.0f));
-//    obj_vertices[0] = mat * obj_vertices[0];
-//    obj_vertices[1] = mat * obj_vertices[1];
-//    obj_vertices[2] = mat * obj_vertices[2];
-//    obj_faces[0] = mat*obj_faces[0];
-    obj_vertices.push_back(glm::vec4(5.0f, 0.5f, -0.5f, 1.0f));
-    obj_faces.push_back(glm::uvec3(1, 3, 2));
-
+    gen_geo_recursive(obj_vertices, obj_faces, 0,
+                      glm::vec3(-.5f, -.5f, -.5f),
+                      glm::vec3(.5f, .5f, .5f));
 }
 

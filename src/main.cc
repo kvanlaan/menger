@@ -148,10 +148,15 @@ KeyCallback(GLFWwindow* window,
 	if (key == GLFW_KEY_0 && action != GLFW_RELEASE) {
 		// FIXME: Change nesting level of g_menger
 		// Note: GLFW_KEY_0 - 4 may not be continuous.
+        g_menger->set_nesting_level(0);
 	} else if (key == GLFW_KEY_1 && action != GLFW_RELEASE) {
+        g_menger->set_nesting_level(1);
 	} else if (key == GLFW_KEY_2 && action != GLFW_RELEASE) {
+        g_menger->set_nesting_level(2);
 	} else if (key == GLFW_KEY_3 && action != GLFW_RELEASE) {
+        g_menger->set_nesting_level(3);
 	} else if (key == GLFW_KEY_4 && action != GLFW_RELEASE) {
+        g_menger->set_nesting_level(4);
 	}
 }
 
@@ -213,10 +218,11 @@ int main(int argc, char* argv[])
 	std::vector<glm::uvec3> obj_faces;
 
     //FIXME: Create the geometry from a Menger object.
-    CreateTriangle(obj_vertices, obj_faces);
-    g_menger->generate_geometry(obj_vertices, obj_faces);
+//    CreateTriangle(obj_vertices, obj_faces);
+//    g_menger->generate_geometry(obj_vertices, obj_faces);
 
-	g_menger->set_nesting_level(1);
+//	g_menger->set_nesting_level(1);
+    g_menger->set_nesting_level(0);
 
 	glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
 	glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
@@ -340,11 +346,19 @@ int main(int argc, char* argv[])
 
         if (g_menger && g_menger->is_dirty())
         {
+            obj_vertices.clear();
+            obj_faces.clear();
             g_menger->generate_geometry(obj_vertices, obj_faces);
             g_menger->set_clean();
 
             // FIXME: Upload your vertex data here.
+            CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER,
+                sizeof(float) * obj_vertices.size() * 4, obj_vertices.data(),
+                GL_STATIC_DRAW));
 
+            CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                sizeof(uint32_t) * obj_faces.size() * 3,
+                obj_faces.data(), GL_STATIC_DRAW));
 		}
 
 		// Compute the projection matrix.
