@@ -1,24 +1,6 @@
 #include "camera.h"
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <memory>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-
-// OpenGL library includes
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <debuggl.h>
-#include "menger.h"
-#include "camera.h"
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 #include "glm/ext.hpp"
-#include <iostream>
 
 namespace {
 float pan_speed = 0.1f;
@@ -41,11 +23,6 @@ glm::vec3 Camera::newTangent() const{
     return glm::normalize(glm::cross(look_, up_));
 }
 
-glm::vec3 Camera::newUp() const{
-    return glm::normalize(glm::cross(glm::normalize(glm::cross(look_, up_)), look_));
-}
-
-
 void Camera::zoom(double currentMousePos) {
     bool zoomIn = true;
     double checkingForZoomDirection = currentMousePos;
@@ -57,6 +34,9 @@ void Camera::zoom(double currentMousePos) {
     auto oldCamera = camera_distance_ * look_;
     if(zoomIn) {
         camera_distance_ = camera_distance_ - zoom_speed;
+        if(camera_distance_ <= 0.0001) {
+            camera_distance_ = 0.001;
+        }
         eye_ = (eye_ + oldCamera) -  (camera_distance_ * look_);
     } else {
         camera_distance_ = camera_distance_ + zoom_speed;
@@ -71,21 +51,42 @@ void Camera::setCoords(double currentX, double currentY) {
 }
 
 void Camera::rotate(double currentX, double currentY) {
+    // my own version of center
     auto oldCamera = camera_distance_ * look_;
     double diffX = currentX - oldCoords.x;
     double diffY = currentY - oldCoords.y;
+    // get the new vector
     glm::vec3 newVector = (-diffY*tangent_)+(diffX*up_);
+    // translate to world coordinated
     glm::mat4 rotatedVector = glm::rotate(rotation_speed, newVector);
+
+    // need to adjust remaining coords
     glm::vec4 changedLook = rotatedVector * glm::vec4(look_, 0);
-       look_ = glm::normalize(glm::vec3(changedLook.x, changedLook.y, changedLook.z));
+    look_ = glm::normalize(glm::vec3(changedLook.x, changedLook.y, changedLook.z));
     glm::vec4 changedUp =  rotatedVector * glm::vec4(up_, 0);
     up_ = glm::normalize(glm::vec3(changedUp.x, changedUp.y, changedUp.z));
     tangent_ = newTangent();
+
     eye_ = eye_ + oldCamera - (camera_distance_ * look_);
 
 }
 
 void Camera::transformViewMatrix(int key) {
+    // up down
+    if(key == GLFW_KEY_UP){
+        eye_ = eye_ + (pan_speed * up_);
+    }
+    if(key == GLFW_KEY_DOWN){
+        eye_ = eye_ -(pan_speed * up_);
+    }
+    //rolling
+    if(key == GLFW_KEY_LEFT){
+        up_ = glm::normalize(glm::rotate(up_, -roll_speed, -look_));
+    }
+    if(key == GLFW_KEY_RIGHT){
+        up_ = glm::normalize(glm::rotate(up_, roll_speed, -look_));
+    }
+    //strafing
     if(key == GLFW_KEY_W) {
         eye_ = eye_ + (zoom_speed * look_);
     }
@@ -93,22 +94,10 @@ void Camera::transformViewMatrix(int key) {
         eye_ = eye_ -(pan_speed * newTangent());
     }
     if(key == GLFW_KEY_S){
-        eye_ = eye_ -  zoom_speed * look_;
+        eye_ = eye_ - (zoom_speed * look_);
     }
     if(key == GLFW_KEY_D){
         eye_ = eye_ + (pan_speed * newTangent());
-    }
-    if(key == GLFW_KEY_UP){
-        eye_ = eye_ + (pan_speed * newUp());
-    }
-    if(key == GLFW_KEY_DOWN){
-        eye_ = eye_ -(pan_speed * newUp());
-    }
-    if(key == GLFW_KEY_LEFT){
-        up_ = glm::rotate(up_, -roll_speed, -look_);
-    }
-    if(key == GLFW_KEY_RIGHT){
-        up_ = glm::rotate(up_, roll_speed, -look_);
     }
 }
 
