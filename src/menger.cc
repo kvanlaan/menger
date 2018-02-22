@@ -54,6 +54,7 @@ void Menger::draw_cube(std::vector<glm::vec4>& obj_vertices,
                                    obj_vertices.size(),
                                    obj_vertices.size()) : (glm::uvec3(0, 0, 0));
 
+    //push back the vertices of the cube
     obj_vertices.push_back(glm::vec4(x_min, y_min, z_min, 1.0f)); //0
     obj_vertices.push_back(glm::vec4(x_min, y_min, z_max, 1.0f)); //1
     obj_vertices.push_back(glm::vec4(x_min, y_max, z_max, 1.0f)); //2
@@ -63,23 +64,24 @@ void Menger::draw_cube(std::vector<glm::vec4>& obj_vertices,
     obj_vertices.push_back(glm::vec4(x_max, y_min, z_min, 1.0f)); //6
     obj_vertices.push_back(glm::vec4(x_max, y_min, z_max, 1.0f)); //7
 
+    //push back the triangles that make up the faces of the cube
     //parallel to zmin
     obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 3));
-    obj_faces.push_back(num_vertices + glm::uvec3(6, 5, 0));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 5, 3));
     //parallel to zmax
     obj_faces.push_back(num_vertices + glm::uvec3(1, 7, 2));
     obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 2));
 
     //parallel to xmin
-    obj_faces.push_back(num_vertices + glm::uvec3(0, 1, 3));
-    obj_faces.push_back(num_vertices + glm::uvec3(1, 2, 3));
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 3, 1));
+    obj_faces.push_back(num_vertices + glm::uvec3(3, 2, 1));
     //parallel to xmax
-    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 5));
-    obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 5));
+    obj_faces.push_back(num_vertices + glm::uvec3(7, 6, 5));
+    obj_faces.push_back(num_vertices + glm::uvec3(5, 4, 7));
 
     //parallel to ymin
     obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 1));
-    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 0));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 1));
     //parallel to ymax
     obj_faces.push_back(num_vertices + glm::uvec3(3, 5, 2));
     obj_faces.push_back(num_vertices + glm::uvec3(5, 4, 2));
@@ -127,7 +129,7 @@ void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
                                 (x == x_min + 2 * third && y == y_min + third && z == z_min + third) ||
                                 (x == x_min + third && y == y_min + 2*third && z == z_min + third));
 
-                    if(!empty)
+                    if(empty)
                     {
                         gen_geo_recursive(obj_vertices, obj_faces,
                                           depth + 1,

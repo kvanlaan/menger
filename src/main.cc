@@ -228,12 +228,7 @@ int main(int argc, char* argv[])
     std::vector<glm::vec4> obj_vertices;
     std::vector<glm::uvec3> obj_faces;
 
-    //FIXME: Create the geometry from a Menger object.
-//    CreateTriangle(obj_vertices, obj_faces);
-//    g_menger->generate_geometry(obj_vertices, obj_faces);
-
-//	g_menger->set_nesting_level(1);
-    g_menger->set_nesting_level(0);
+    g_menger->set_nesting_level(1);
 
     glm::vec4 min_bounds = glm::vec4(std::numeric_limits<float>::max());
     glm::vec4 max_bounds = glm::vec4(-std::numeric_limits<float>::max());
