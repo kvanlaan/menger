@@ -102,7 +102,7 @@ void Camera::transformViewMatrix(int key) {
         eye_ = eye_ + (pan_speed * newUp());
     }
     if(key == GLFW_KEY_DOWN){
-        eye_ += -1 * pan_speed * newUp();
+        eye_ = eye_ -(pan_speed * newUp());
     }
     if(key == GLFW_KEY_LEFT){
         up_ = glm::rotate(up_, -roll_speed, -look_);
