@@ -49,9 +49,10 @@ void Menger::draw_cube(std::vector<glm::vec4>& obj_vertices,
     const auto z_max = max_vals[2];
 
     //skip all previous vertices
-    const auto num_vertices = glm::uvec3(obj_faces.size(),
-                                   obj_faces.size(),
-                                   obj_faces.size());
+    const auto num_vertices = (!obj_vertices.empty()) ?
+                glm::uvec3(obj_vertices.size(),
+                                   obj_vertices.size(),
+                                   obj_vertices.size()) : (glm::uvec3(0, 0, 0));
 
     obj_vertices.push_back(glm::vec4(x_min, y_min, z_min, 1.0f)); //0
     obj_vertices.push_back(glm::vec4(x_min, y_min, z_max, 1.0f)); //1
@@ -108,8 +109,8 @@ void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
         //it's a cube, so these diffs should all
         //be the same lol
         auto third = (x_max - x_min)/3;
-        auto x = x_min;
 
+        auto x = x_min;
         while(x < x_max)
         {
             auto y = y_min;
@@ -118,17 +119,15 @@ void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
                 auto z = z_min;
                 while(z < z_max)
                 {
-                    if(!(x == x_min + third &&
-                         y == y_min + third &&
-                         (z == z_min || z_max)) &&
-                            !((x == x_min + third) &&
-                              (z == z_min + third) &&
-                              (y == y_min || y == y_max)) &&
-                            !((y == y_min + third) &&
-                              (z == z_min + third) &&
-                              (x == x_min || x == x_max)) &&
-                            !((x == x + third) && (y == y + third)
-                              && (z == z + third)))
+                    bool empty = ((x == x_min + third && y == y_min && z == z_min + third) ||
+                                (x == x_min + third && y == y_min + third && z == z_min) ||
+                                (x == x_min + third && y == y_min + third && z == z_min + third) ||
+                                (x == x_min && y == y_min + third && z == z_min + third) ||
+                                (x == x_min + third && y == y_min + third && z == z_min + 2 * third) ||
+                                (x == x_min + 2 * third && y == y_min + third && z == z_min + third) ||
+                                (x == x_min + third && y == y_min + 2*third && z == z_min + third));
+
+                    if(!empty)
                     {
                         gen_geo_recursive(obj_vertices, obj_faces,
                                           depth + 1,

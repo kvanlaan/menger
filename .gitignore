@@ -1,1 +1,2 @@
-menger/build
+build*
+CMakeLists.txt.user
