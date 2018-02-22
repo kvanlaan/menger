@@ -62,19 +62,27 @@ void Menger::draw_cube(std::vector<glm::vec4>& obj_vertices,
     obj_vertices.push_back(glm::vec4(x_max, y_min, z_min, 1.0f)); //6
     obj_vertices.push_back(glm::vec4(x_max, y_min, z_max, 1.0f)); //7
 
+    //parallel to zmin
     obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 3));
     obj_faces.push_back(num_vertices + glm::uvec3(6, 5, 0));
-    obj_faces.push_back(num_vertices + glm::uvec3(0, 1, 3));
-    obj_faces.push_back(num_vertices + glm::uvec3(1, 2, 3));
-    obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 1));
-    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 0));
-
+    //parallel to zmax
     obj_faces.push_back(num_vertices + glm::uvec3(1, 7, 2));
     obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 2));
+
+    //parallel to xmin
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 1, 3));
+    obj_faces.push_back(num_vertices + glm::uvec3(1, 2, 3));
+    //parallel to xmax
     obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 5));
     obj_faces.push_back(num_vertices + glm::uvec3(7, 4, 5));
+
+    //parallel to ymin
+    obj_faces.push_back(num_vertices + glm::uvec3(0, 6, 1));
+    obj_faces.push_back(num_vertices + glm::uvec3(6, 7, 0));
+    //parallel to ymax
     obj_faces.push_back(num_vertices + glm::uvec3(3, 5, 2));
     obj_faces.push_back(num_vertices + glm::uvec3(5, 4, 2));
+
 }
 
 void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
