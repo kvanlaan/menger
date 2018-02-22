@@ -1,0 +1,6 @@
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/CMakeFiles/edit_cache.dir
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/CMakeFiles/rebuild_cache.dir
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/CMakeFiles/utgraphicsutil.dir
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/src/CMakeFiles/rebuild_cache.dir
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/src/CMakeFiles/edit_cache.dir
+/v/filer5b/v20q001/kvanlaan/Documents/menger/build/src/CMakeFiles/menger.dir
