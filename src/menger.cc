@@ -103,46 +103,36 @@ void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
     {
         const auto x_min = minvals[0];
         const auto x_max = maxvals[0];
-        const auto y_min = minvals[1];
-        const auto y_max = maxvals[1];
-        const auto z_min = minvals[2];
-        const auto z_max = maxvals[2];
 
         //it's a cube, so these diffs should all
         //be the same lol
-        auto third = (x_max - x_min)/3;
+        auto third = (x_max - x_min)/3.f;
 
-        auto x = x_min;
-        while(x < x_max)
+        for(int x = 0; x < 3; ++ x)
         {
-            auto y = y_min;
-            while(y < y_max)
+            for(int y = 0; y < 3; ++ y)
             {
-                auto z = z_min;
-                while(z < z_max)
+                for(int z = 0; z < 3; ++ z)
                 {
-                    bool empty = ((x == x_min + third && y == y_min && z == z_min + third) ||
-                                (x == x_min + third && y == y_min + third && z == z_min) ||
-                                (x == x_min + third && y == y_min + third && z == z_min + third) ||
-                                (x == x_min && y == y_min + third && z == z_min + third) ||
-                                (x == x_min + third && y == y_min + third && z == z_min + 2 * third) ||
-                                (x == x_min + 2 * third && y == y_min + third && z == z_min + third) ||
-                                (x == x_min + third && y == y_min + 2*third && z == z_min + third));
-
+                    bool empty = ((x == 1 && y == 0 && z == 1) ||
+                                  (x == 1 && y == 1 && z == 0) ||
+                                  (x == 1 && y == 1 && z == 1) ||
+                                  (x == 0 && y == 1 && z == 1) ||
+                                  (x == 1 && y == 1 && z == 2) ||
+                                  (x == 2 && y == 1 && z == 1) ||
+                                  (x == 1 && y == 2 && z == 1));
                     if(!empty)
                     {
+                        glm::vec3 min_vec = minvals + (glm::vec3(x, y, z) * third);
+                        glm::vec3 max_vec = minvals + (glm::vec3(x, y, z) * third)
+                                + (glm::vec3(1.f, 1.f, 1.f) * third);
                         gen_geo_recursive(obj_vertices, obj_faces,
                                           depth + 1,
-                                          glm::vec3(x, y, z),
-                                          glm::vec3(x+third,
-                                                    y+third,
-                                                    z+third));
+                                          glm::vec3(min_vec),
+                                          glm::vec3(max_vec));
                     }
-                    z += third;
                 }
-                y += third;
             }
-            x += third;
         }
     }
 }
