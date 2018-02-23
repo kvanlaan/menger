@@ -29,52 +29,75 @@ GLuint g_buffer_objects[kNumVaos][kNumVbos];  // These will store VBO descriptor
 // C++ 11 String Literal
 // See http://en.cppreference.com/w/cpp/language/string_literal
 const char* vertex_shader =
-R"zzz(#version 330 core
-in vec4 vertex_position;
-uniform mat4 view;
-uniform vec4 light_position;
-out vec4 vs_light_direction;
-void main()
-{
-    gl_Position = view * vertex_position;
-    vs_light_direction = -gl_Position + view * light_position;
-}
-)zzz";
+        R"zzz(#version 330 core
+        in vec4 vertex_position;
+        uniform mat4 view;
+        uniform vec4 light_position;
+        out vec4 vs_light_direction;
+        out vec4 world_position;
+        void main()
+        {
+            gl_Position = view * vertex_position;
+            vs_light_direction = -gl_Position + view * light_position;
+            world_position = vertex_position;
+        }
+        )zzz";
 
 const char* geometry_shader =
         R"zzz(#version 330 core
         layout (triangles) in;
-layout (triangle_strip, max_vertices = 3) out;
-uniform mat4 projection;
-in vec4 vs_light_direction[];
-flat out vec4 normal;
-out vec4 light_direction;
-void main()
-{
-    int n = 0;
-    normal = vec4(0.0, 0.0, 1.0f, 0.0);
-    for (n = 0; n < gl_in.length(); n++) {
-        light_direction = vs_light_direction[n];
-        gl_Position = projection * gl_in[n].gl_Position;
-        EmitVertex();
-    }
-    EndPrimitive();
-}
-)zzz";
+        layout (triangle_strip, max_vertices = 3) out;
+        uniform mat4 view;
+        uniform mat4 projection;
+        in vec4 vs_light_direction[];
+        in vec4 world_position[];
+        flat out vec4 normal;
+        out vec4 light_direction;
+        out vec4 vertex_position_world;
+        void main()
+        {
+            vec4 x_inv = inverse(view) * vec4(gl_in[0].gl_Position.xyz, 1.0f);
+            vec4 y_inv = inverse(view) * vec4(gl_in[1].gl_Position.xyz, 1.0f);
+            vec4 z_inv = inverse(view) * vec4(gl_in[2].gl_Position.xyz, 1.0f);
 
+            vec3 x_vec = vec3(x_inv.x, x_inv.y, x_inv.z);
+            vec3 y_vec = vec3(y_inv.x, y_inv.y, y_inv.z);
+            vec3 z_vec = vec3(z_inv.x, z_inv.y, z_inv.z);
+
+            normal = vec4(normalize(cross(y_vec - x_vec, z_vec - x_vec)), 1.0f);
+
+            for (int n = 0; n < gl_in.length(); n++)
+            {
+                light_direction = vs_light_direction[n];
+                gl_Position = projection * gl_in[n].gl_Position;
+                vertex_position_world = world_position[n];
+                EmitVertex();
+            }
+            EndPrimitive();
+        }
+        )zzz";
+
+//Normal	Color
+//(1,0,0)(1,0,0)	red
+//(0,1,0)(0,1,0)	green
+//(0,0,1)(0,0,1)	blue
+//(−1,0,0)(−1,0,0)	red
+//(0,−1,0)(0,−1,0)	green
+//(0,0,−1)(0,0,−1)	blue
 const char* fragment_shader =
         R"zzz(#version 330 core
         flat in vec4 normal;
-in vec4 light_direction;
-out vec4 fragment_color;
-void main()
-{
-    vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
-    float dot_nl = dot(normalize(light_direction), normalize(normal));
-    dot_nl = clamp(dot_nl, 0.0, 1.0);
-    fragment_color = clamp(dot_nl * color, 0.0, 1.0);
-}
-)zzz";
+        uniform mat4 view;
+        in vec4 light_direction;
+        out vec4 fragment_color;
+        void main()
+        {
+            vec4 color = abs(normal) + vec4(0.0, 0.0, 0.0, 1.0);
+            float dot_nl = dot(normalize(light_direction), normalize(normal));
+            dot_nl = clamp(dot_nl, 0.0, 1.0);
+            fragment_color = clamp(dot_nl * color, 0.0, 1.0);
+        }
+        )zzz";
 
 // FIXME: Implement shader effects with an alternative shader.
 const char* floor_fragment_shader =

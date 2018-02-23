@@ -129,7 +129,7 @@ void Menger::gen_geo_recursive(std::vector<glm::vec4>& obj_vertices,
                                 (x == x_min + 2 * third && y == y_min + third && z == z_min + third) ||
                                 (x == x_min + third && y == y_min + 2*third && z == z_min + third));
 
-                    if(empty)
+                    if(!empty)
                     {
                         gen_geo_recursive(obj_vertices, obj_faces,
                                           depth + 1,
